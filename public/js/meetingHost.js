@@ -1,5 +1,4 @@
-
-      class WebRTCManager {
+class WebRTCManager {
         constructor(socket) {
           this.socket = socket;
           this.localStream = null;
@@ -13,7 +12,26 @@
           this.configuration = {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' }
+              { urls: 'stun:stun1.l.google.com:19302' },
+              { urls: 'stun:stun2.l.google.com:19302' },
+              { urls: 'stun:stun3.l.google.com:19302' },
+              { urls: 'stun:stun4.l.google.com:19302' },
+              { urls: 'stun:stun.stunprotocol.org:3478' },
+              {
+                urls: 'turn:openrelay.metered.ca:80',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              },
+              {
+                urls: 'turn:openrelay.metered.ca:443',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              },
+              {
+                urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              }
             ]
           };
 
@@ -43,6 +61,20 @@
           this.socket.on('ice-candidate', async (data) => {
             await this.handleIceCandidate(data);
           });
+          
+          this.socket.on('restart-connection', async (data) => {
+            const { targetSocketId } = data;
+            console.log(`Restarting connection with ${targetSocketId}`);
+            
+            // Close existing connection
+            if (this.peerConnections.has(targetSocketId)) {
+              this.peerConnections.get(targetSocketId).close();
+              this.peerConnections.delete(targetSocketId);
+            }
+            
+            // Create new connection
+            await this.createPeerConnection(targetSocketId, true);
+          });
         }
 
         async initialize() {
@@ -67,7 +99,29 @@
             return true;
           } catch (error) {
             console.error('Error accessing media devices:', error);
-            return false;
+            
+            // Try fallback with lower quality
+            try {
+              this.localStream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                  width: { ideal: 640 }, 
+                  height: { ideal: 480 },
+                  frameRate: { ideal: 15 }
+                },
+                audio: { 
+                  echoCancellation: true,
+                  noiseSuppression: true,
+                  autoGainControl: true
+                }
+              });
+              
+              this.startAudioLevelMonitoring();
+              console.log('Local stream initialized with fallback settings');
+              return true;
+            } catch (fallbackError) {
+              console.error('Fallback media access also failed:', fallbackError);
+              return false;
+            }
           }
         }
 
@@ -125,34 +179,55 @@
             // Add local stream tracks
             if (this.localStream) {
               this.localStream.getTracks().forEach(track => {
+                console.log(`Adding track to peer connection: ${track.kind}`);
                 peerConnection.addTrack(track, this.localStream);
               });
             }
 
             // Handle remote stream
             peerConnection.ontrack = (event) => {
-              console.log('Received remote track from:', remoteSocketId);
-              const [remoteStream] = event.streams;
-              this.remoteStreams.set(remoteSocketId, remoteStream);
-              this.updateRemoteVideo(remoteSocketId, remoteStream);
+              console.log('Received remote track from:', remoteSocketId, event.streams);
+              if (event.streams && event.streams[0]) {
+                const remoteStream = event.streams[0];
+                this.remoteStreams.set(remoteSocketId, remoteStream);
+                this.updateRemoteVideo(remoteSocketId, remoteStream);
+              }
             };
 
             // Handle ICE candidates
             peerConnection.onicecandidate = (event) => {
               if (event.candidate) {
+                console.log(`Sending ICE candidate to ${remoteSocketId}`);
                 this.socket.emit('ice-candidate', {
                   target: remoteSocketId,
                   candidate: event.candidate
                 });
+              } else {
+                console.log('ICE candidate gathering complete');
               }
             };
 
-            // Handle connection state changes
+            // Log ICE gathering state changes
+            peerConnection.onicegatheringstatechange = () => {
+              console.log(`ICE gathering state: ${peerConnection.iceGatheringState}`);
+            };
+
+            // Log ICE connection state changes
+            peerConnection.oniceconnectionstatechange = () => {
+              console.log(`ICE connection state with ${remoteSocketId}: ${peerConnection.iceConnectionState}`);
+              if (peerConnection.iceConnectionState === 'failed' || 
+                  peerConnection.iceConnectionState === 'disconnected') {
+                console.log(`Connection failed with ${remoteSocketId}, attempting restart`);
+                this.socket.emit('connection-failed', { targetSocketId: remoteSocketId });
+              }
+            };
+
+            // Log connection state changes
             peerConnection.onconnectionstatechange = () => {
-              console.log(`Connection state with ${remoteSocketId}:`, peerConnection.connectionState);
+              console.log(`Connection state with ${remoteSocketId}: ${peerConnection.connectionState}`);
               if (peerConnection.connectionState === 'failed') {
                 console.log(`Connection failed with ${remoteSocketId}, attempting restart`);
-                peerConnection.restartIce();
+                this.socket.emit('connection-failed', { targetSocketId: remoteSocketId });
               }
             };
 
@@ -162,6 +237,8 @@
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
               });
+              
+              console.log(`Created offer for ${remoteSocketId}`, offer);
               await peerConnection.setLocalDescription(offer);
               
               this.socket.emit('offer', {
@@ -176,7 +253,7 @@
 
         async handleOffer(data) {
           const { offer, sender } = data;
-          console.log(`Handling offer from ${sender}`);
+          console.log(`Handling offer from ${sender}`, offer);
           
           try {
             let peerConnection = this.peerConnections.get(sender);
@@ -188,21 +265,25 @@
               // Add local stream tracks
               if (this.localStream) {
                 this.localStream.getTracks().forEach(track => {
+                  console.log(`Adding track to peer connection: ${track.kind}`);
                   peerConnection.addTrack(track, this.localStream);
                 });
               }
 
               // Handle remote stream
               peerConnection.ontrack = (event) => {
-                console.log('Received remote track from:', sender);
-                const [remoteStream] = event.streams;
-                this.remoteStreams.set(sender, remoteStream);
-                this.updateRemoteVideo(sender, remoteStream);
+                console.log('Received remote track from:', sender, event.streams);
+                if (event.streams && event.streams[0]) {
+                  const remoteStream = event.streams[0];
+                  this.remoteStreams.set(sender, remoteStream);
+                  this.updateRemoteVideo(sender, remoteStream);
+                }
               };
 
               // Handle ICE candidates
               peerConnection.onicecandidate = (event) => {
                 if (event.candidate) {
+                  console.log(`Sending ICE candidate to ${sender}`);
                   this.socket.emit('ice-candidate', {
                     target: sender,
                     candidate: event.candidate
@@ -210,12 +291,27 @@
                 }
               };
 
-              // Handle connection state changes
+              // Log ICE gathering state changes
+              peerConnection.onicegatheringstatechange = () => {
+                console.log(`ICE gathering state: ${peerConnection.iceGatheringState}`);
+              };
+
+              // Log ICE connection state changes
+              peerConnection.oniceconnectionstatechange = () => {
+                console.log(`ICE connection state with ${sender}: ${peerConnection.iceConnectionState}`);
+                if (peerConnection.iceConnectionState === 'failed' || 
+                    peerConnection.iceConnectionState === 'disconnected') {
+                  console.log(`Connection failed with ${sender}, attempting restart`);
+                  this.socket.emit('connection-failed', { targetSocketId: sender });
+                }
+              };
+
+              // Log connection state changes
               peerConnection.onconnectionstatechange = () => {
-                console.log(`Connection state with ${sender}:`, peerConnection.connectionState);
+                console.log(`Connection state with ${sender}: ${peerConnection.connectionState}`);
                 if (peerConnection.connectionState === 'failed') {
                   console.log(`Connection failed with ${sender}, attempting restart`);
-                  peerConnection.restartIce();
+                  this.socket.emit('connection-failed', { targetSocketId: sender });
                 }
               };
             }
@@ -236,29 +332,39 @@
 
         async handleAnswer(data) {
           const { answer, sender } = data;
-          console.log(`Handling answer from ${sender}`);
+          console.log(`Handling answer from ${sender}`, answer);
           
           const peerConnection = this.peerConnections.get(sender);
           
           if (peerConnection && peerConnection.signalingState === 'have-local-offer') {
             try {
               await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+              console.log(`Set remote description for ${sender} successfully`);
             } catch (error) {
               console.error('Error handling answer:', error);
             }
+          } else {
+            console.warn(`Cannot set remote description for ${sender}, invalid state:`, 
+                         peerConnection ? peerConnection.signalingState : 'no connection');
           }
         }
 
         async handleIceCandidate(data) {
           const { candidate, sender } = data;
+          console.log(`Handling ICE candidate from ${sender}`);
+          
           const peerConnection = this.peerConnections.get(sender);
           
           if (peerConnection && peerConnection.remoteDescription) {
             try {
               await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+              console.log(`Added ICE candidate for ${sender} successfully`);
             } catch (error) {
               console.error('Error handling ICE candidate:', error);
             }
+          } else {
+            console.warn(`Cannot add ICE candidate for ${sender}, invalid state:`, 
+                         peerConnection ? 'No remote description' : 'No connection');
           }
         }
 
@@ -269,9 +375,14 @@
             if (videoWrapper) {
               const video = videoWrapper.querySelector('.video-frame');
               if (video && video.srcObject !== stream) {
+                console.log(`Updating video element for ${socketId}`);
                 video.srcObject = stream;
                 video.play().catch(e => console.error('Error playing video:', e));
+              } else {
+                console.warn(`Video element for ${socketId} not found or already has stream`);
               }
+            } else {
+              console.warn(`Video wrapper for ${socketId} not found`);
             }
           }, 100);
         }

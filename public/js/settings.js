@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
     closeSettings.addEventListener('click', () => {
       settingsModal.classList.remove('show');
       document.body.style.overflow = 'auto';
+      
+      // Fix for extra space - remove any inline styles that might be causing issues
+      document.body.style.paddingRight = '';
+      document.body.style.marginRight = '';
     });
   }
   
@@ -60,6 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         settingsModal.classList.remove('show');
         document.body.style.overflow = 'auto';
+        // Fix for extra space
+        document.body.style.paddingRight = '';
+        document.body.style.marginRight = '';
       }, 1000);
       
       // Remove toast after animation
@@ -199,4 +206,26 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  
+  // Clean up any body styles when the modal is closed by clicking outside
+  window.addEventListener('click', function(e) {
+    if (settingsModal && e.target === settingsModal) {
+      settingsModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+      // Fix for extra space
+      document.body.style.paddingRight = '';
+      document.body.style.marginRight = '';
+    }
+  });
+  
+  // Clean up on escape key
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && settingsModal && settingsModal.classList.contains('show')) {
+      settingsModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+      // Fix for extra space
+      document.body.style.paddingRight = '';
+      document.body.style.marginRight = '';
+    }
+  });
 });
