@@ -1,4 +1,3 @@
-
 import path from 'path';
 import { dirname } from 'path';
 import bcrypt from 'bcryptjs';
@@ -7,10 +6,12 @@ import MongoStore from 'connect-mongo';
 import mongoose from 'mongoose';
 import { fileURLToPath } from 'url';
 
-
 // Fix for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// MongoDB Atlas URI
+const MONGO_URI = 'mongodb+srv://faithabayomi18:f1vouroluw11972@dominionspecialist.cdp3oi9.mongodb.net/videocall?retryWrites=true&w=majority&appName=dominionspecialist';
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -39,7 +40,7 @@ export const setupSession = (app) => {
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: 'mongodb://localhost:27017/videocall'
+      mongoUrl: MONGO_URI
     }),
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
   }));
