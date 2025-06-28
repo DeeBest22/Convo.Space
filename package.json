@@ -1,0 +1,27 @@
+{
+  "name": "video-call-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
+    "multer": "^2.0.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.2"
+  }
+}

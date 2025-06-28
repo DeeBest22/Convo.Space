@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #3b82f6;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 12px;
+            background: rgba(51, 65, 85, 0.8);
+            color: #f1f5f9;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(51, 65, 85, 0.8);
+            color: #e2e8f0;
+            border: 2px solid rgba(71, 85, 105, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(71, 85, 105, 0.9);
+            border-color: rgba(71, 85, 105, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(71, 85, 105, 0.5);
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .join-section {
+            display: flex;
+            gap: 12px;
+        }
+
+        .join-section input {
+            flex: 1;
+        }
+
+        .join-section .btn {
+            flex: none;
+            padding: 12px 20px;
+        }
+
+        .error-message {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-top: 2px solid #94a3b8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .join-section {
+                flex-direction: column;
+            }
+
+            .join-section .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-video"></i>
+        </div>
+        <h1>Video Call App</h1>
+        <p class="subtitle">Start or join a video meeting</p>
+
+        <div class="form-group">
+            <label for="userName">Your Name</label>
+            <input type="text" id="userName" placeholder="Enter your name" required>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" id="hostBtn">
+                <i class="fas fa-plus"></i>
+                Host Meeting
+            </button>
+            <button class="btn btn-secondary" id="createBtn" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i>
+                Creating...
+            </button>
+        </div>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <div class="join-section">
+            <input type="text" id="meetingId" placeholder="Enter Meeting ID" maxlength="8">
+            <button class="btn btn-primary" id="joinBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                Join
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span>Processing...</span>
+        </div>
+
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        const userNameInput = document.getElementById('userName');
+        const meetingIdInput = document.getElementById('meetingId');
+        const hostBtn = document.getElementById('hostBtn');
+        const createBtn = document.getElementById('createBtn');
+        const joinBtn = document.getElementById('joinBtn');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(show = true) {
+            loading.classList.toggle('show', show);
+        }
+
+        function validateName() {
+            const name = userNameInput.value.trim();
+            if (!name) {
+                showError('Please enter your name');
+                userNameInput.focus();
+                return false;
+            }
+            return true;
+        }
+
+        hostBtn.addEventListener('click', async () => {
+            if (!validateName()) return;
+
+            const hostName = userNameInput.value.trim();
+            
+            hostBtn.style.display = 'none';
+            createBtn.style.display = 'flex';
+            showLoading(true);
+
+            try {
+                const response = await fetch('/api/create-meeting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ hostName })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store host name in session storage
+                    sessionStorage.setItem('userName', hostName);
+                    sessionStorage.setItem('isHost', 'true');
+                    
+                    // Redirect to host page
+                    window.location.href = `/host/${data.meetingId}`;
+                } else {
+                    throw new Error(data.error || 'Failed to create meeting');
+                }
+            } catch (error) {
+                console.error('Error creating meeting:', error);
+                showError('Failed to create meeting. Please try again.');
+                
+                hostBtn.style.display = 'flex';
+                createBtn.style.display = 'none';
+                showLoading(false);
+            }
+        });
+
+        joinBtn.addEventListener('click', async () => {
+            if (!validateName()) return;
+
+            const meetingId = meetingIdInput.value.trim().toUpperCase();
+            const participantName = userNameInput.value.trim();
+
+            if (!meetingId) {
+                showError('Please enter a meeting ID');
+                meetingIdInput.focus();
+                return;
+            }
+
+            if (meetingId.length !== 8) {
+                showError('Meeting ID must be 8 characters long');
+                meetingIdInput.focus();
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                // Check if meeting exists
+                const response = await fetch(`/api/meeting/${meetingId}`);
+                
+                if (response.ok) {
+                    // Store participant info in session storage
+                    sessionStorage.setItem('userName', participantName);
+                    sessionStorage.setItem('isHost', 'false');
+                    
+                    // Redirect to join page
+                    window.location.href = `/join/${meetingId}`;
+                } else if (response.status === 404) {
+                    throw new Error('Meeting not found. Please check the meeting ID.');
+                } else {
+                    throw new Error('Failed to join meeting. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error joining meeting:', error);
+                showError(error.message);
+                showLoading(false);
+            }
+        });
+
+        // Format meeting ID input
+        meetingIdInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+            if (value.length > 8) {
+                value = value.substring(0, 8);
+            }
+            e.target.value = value;
+        });
+
+        // Enter key handling
+        userNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                hostBtn.click();
+            }
+        });
+
+        meetingIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                joinBtn.click();
+            }
+        });
+
+        // Auto-focus name input
+        userNameInput.focus();
+    </script>
+</body>
+</html>
