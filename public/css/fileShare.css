@@ -1,0 +1,599 @@
+:root {
+  --primary-color: #4a6cf7;
+  --primary-dark: #3755d8;
+  --accent-color: #6a82fb;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --dark-color: #343a40;
+  --light-color: #f8f9fa;
+  --gray-color: #6c757d;
+  --gray-light: #e9ecef;
+  --gray-dark: #495057;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f7fb;
+  color: var(--dark-color);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Floating Share Button */
+.floating-btn {
+  position: fixed;
+  bottom: 23px;
+  right: 110px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  border: none;
+  z-index: 998;
+  transition: var(--transition);
+}
+
+.floating-btn:hover {
+  transform: scale(1.1);
+  background: var(--primary-dark);
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1010;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+/* Base Styles */
+
+
+/* Modal Styles */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content-share {
+  background-color: white;
+  border-radius: var(--radius);
+  max-width: 1000px;
+  width: 90%;
+  max-height: 90vh;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.4s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.create-group-content {
+  max-width: 500px;
+}
+
+.modal-header-share {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--gray-light);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.modal-header-share h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Group Navigation */
+.group-nav {
+  border-radius: var(--radius);
+  background-color: var(--light-color);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.group-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.group-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  background-color: white;
+  border: 1px solid var(--gray-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.group-item:hover {
+  background-color: #f0f4ff;
+  border-color: var(--primary-color);
+}
+
+.group-item.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Search Container */
+.search-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#search-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--gray-light);
+  border-radius: var(--radius) 0 0 var(--radius);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+#search-btn {
+  padding: 0 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#search-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Upload Container */
+.upload-container {
+  margin-bottom: 25px;
+  background-color: var(--light-color);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+#upload-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.file-input-container {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+#file-input {
+  display: none;
+}
+
+.upload-btn {
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 10px 15px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  background-color: #f0f4ff;
+}
+
+#file-selected {
+  color: var(--gray-color);
+}
+
+.upload-submit-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.upload-submit-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Files Container */
+.files-container {
+  position: relative;
+}
+
+.files-container h3 {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--gray-light);
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.files-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  position: relative;
+}
+
+.no-files {
+  text-align: center;
+  padding: 40px;
+  color: var(--gray-color);
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+.file-item {
+  display: flex;
+  background-color: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+  position: relative;
+}
+
+.file-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f7f9fc;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  min-width: 70px;
+}
+
+.file-details {
+  flex: 1;
+  padding: 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.file-name {
+  font-weight: 500;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--gray-color);
+}
+
+.file-size, .file-date, .file-group {
+  background-color: var(--gray-light);
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.file-group {
+  background-color: #e3e8ff;
+  color: var(--primary-dark);
+}
+
+.file-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #f7f9fc;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--gray-dark);
+  border-radius: 5px;
+  transition: var(--transition);
+  margin-bottom: 5px;
+}
+
+.action-btn:hover {
+  background-color: var(--light-color);
+}
+
+.download-btn:hover {
+  color: var(--primary-color);
+}
+
+.delete-btn:hover {
+  color: var(--danger-color);
+}
+
+/* Create Group Form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input, 
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--gray-light);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Global Button Styles */
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
+/* Notifications */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 15px 20px;
+  border-radius: var(--radius);
+  background-color: white;
+  box-shadow: var(--shadow);
+  z-index: 1020;
+  animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+  max-width: 350px;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.notification.success {
+  border-left: 4px solid var(--success-color);
+}
+
+.notification.error {
+  border-left: 4px solid var(--danger-color);
+}
+
+.notification.info {
+  border-left: 4px solid var(--info-color);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.notification.success i {
+  color: var(--success-color);
+}
+
+.notification.error i {
+  color: var(--danger-color);
+}
+
+.notification.info i {
+  color: var(--info-color);
+}
+
+.notification.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .modal-content-share {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .file-input-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  #upload-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .files-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .floating-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Animations and Effects */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.upload-submit-btn:active {
+  transform: scale(0.95);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-dark);
+}
+/* Add this to your share.css file */
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--gray-light);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Add styles for upload notifications */
+.notification.upload-progress {
+  width: 300px;
+  padding-bottom: 15px;
+}
+
+/* Ensure notifications don't auto-hide during upload */
+.notification.upload-progress {
+  animation: slideIn 0.3s ease;
+}

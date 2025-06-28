@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Chat App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="toggleChat()">
+        <i class="fas fa-comment"></i>
+    </div>
+
+    <!-- Chat Bar -->
+    <div class="chat-bar" id="chatBar">
+        <div class="chat-header">
+            <h3><i class="fas fa-comments"></i> Chat</h3>
+            <button onclick="toggleChat()" class="chat-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="chat-container">
+            <!-- Participants and Groups List -->
+            <div class="chat-participants-list">
+                <ul id="participants">
+                    <li class="active" onclick="selectChat('general')">
+                        <i class="fas fa-globe"></i> General
+                    </li>
+                </ul>
+                <div class="groups-section">
+                    <h4>
+                        <i class="fas fa-users"></i> Groups 
+                        <button id="groupCreateBtn" onclick="openCreateGroupModal()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </h4>
+                    <ul id="groupsList"></ul>
+                </div>
+            </div>
+
+            <!-- Chat Window -->
+            <div class="chat-window">
+                <div id="chat-title" class="chat-title">
+                    <i class="fas fa-globe"></i> General Chat
+                </div>
+                
+                <div class="chat-messages" id="chat-messages"></div>
+                
+                <div id="typingIndicator" class="typing-indicator"></div>
+                
+                <!-- Chat Input Area -->
+                <div class="chat-input">
+                    <div class="input-wrapper">
+                        <div class="editor-wrapper">
+                            <div id="messageInput" class="message-input" contenteditable="true" placeholder="Type your message..."></div>
+                            
+                            <!-- Format Toolbar -->
+                            <div id="formatToolbar" class="format-toolbar">
+                                <div class="toolbar-group">
+                                    <button class="format-btn" data-format="bold" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button class="format-btn" data-format="italic" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button class="format-btn" data-format="underline" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                    <button class="format-btn" data-format="strikethrough" title="Strikethrough">
+                                        <i class="fas fa-strikethrough"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="toolbar-divider"></div>
+                                
+                                <div class="toolbar-group">
+                                    <button class="format-btn" data-format="code" title="Code">
+                                        <i class="fas fa-code"></i>
+                                    </button>
+                                    <button class="format-btn" id="linkBtn" title="Insert Link">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button class="format-btn" id="colorBtn" title="Text Color">
+                                        <i class="fas fa-palette"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="toolbar-divider"></div>
+                                
+                                <div class="toolbar-group">
+                                    <button class="format-btn" data-format="clear" title="Clear formatting">
+                                        <i class="fas fa-eraser"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- chatEmoji Picker -->
+                            <div class="chatEmoji-picker" id="chatEmojiPicker">
+                                <div class="chatEmoji-header">
+                                    <input type="text" class="chatEmoji-search" placeholder="Search chatEmojis..." id="chatEmojiSearch">
+                                </div>
+                                <div class="chatEmoji-categories">
+                                    <button class="chatEmoji-category active" data-category="all">✨</button>
+                                    <button class="chatEmoji-category" data-category="people">😊</button>
+                                    <button class="chatEmoji-category" data-category="animals">🐶</button>
+                                    <button class="chatEmoji-category" data-category="food">🍔</button>
+                                    <button class="chatEmoji-category" data-category="travel">✈️</button>
+                                    <button class="chatEmoji-category" data-category="activities">⚽</button>
+                                </div>
+                                <div class="chatEmoji-grid" id="chatEmojiGrid"></div>
+                            </div>
+
+                            <!-- Color Picker -->
+                            <div class="color-picker" id="colorPicker">
+                                <div class="color-grid">
+                                    <div class="color-option" data-color="#000000" style="background: #000000;"></div>
+                                    <div class="color-option" data-color="#434343" style="background: #434343;"></div>
+                                    <div class="color-option" data-color="#666666" style="background: #666666;"></div>
+                                    <div class="color-option" data-color="#999999" style="background: #999999;"></div>
+                                    <div class="color-option" data-color="#cccccc" style="background: #cccccc;"></div>
+                                    <div class="color-option" data-color="#ffffff" style="background: #ffffff; border: 1px solid #ddd;"></div>
+                                    <div class="color-option" data-color="#ff0000" style="background: #ff0000;"></div>
+                                    <div class="color-option" data-color="#ff9900" style="background: #ff9900;"></div>
+                                    <div class="color-option" data-color="#ffff00" style="background: #ffff00;"></div>
+                                    <div class="color-option" data-color="#00ff00" style="background: #00ff00;"></div>
+                                    <div class="color-option" data-color="#00ffff" style="background: #00ffff;"></div>
+                                    <div class="color-option" data-color="#0000ff" style="background: #0000ff;"></div>
+                                    <div class="color-option" data-color="#9900ff" style="background: #9900ff;"></div>
+                                    <div class="color-option" data-color="#ff00ff" style="background: #ff00ff;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Link Input -->
+                            <div class="link-input" id="linkInput">
+                                <input type="text" placeholder="Enter URL..." id="urlInput">
+                                <button id="insertLinkBtn">Insert</button>
+                            </div>
+                        </div>
+                        
+                        <div class="input-actions">
+                            <button class="chat-action-btn chatEmoji-trigger" title="Add chatEmoji">
+                                <i class="far fa-smile"></i>
+                            </button>
+                            
+                            <button class="chat-action-btn format-trigger" title="Format text">
+                                <i class="fas fa-palette"></i>
+                            </button>
+                            
+                            <button class="chat-action-btn" id="fileButton" title="Attach file">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            
+                            <button class="chat-action-btn" id="recordButton" title="Record voice">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="sendButton" class="send-btn" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+                <div id="uploadStatus" class="upload-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="fileUpload" style="display: none;">
+
+    <!-- Modals -->
+    <div id="createGroupModal" class="modal">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <h3><i class="fas fa-users"></i> Create Group</h3>
+                <button class="modal-close" onclick="closeCreateGroupModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-modal-body">
+                <input type="text" id="groupNameInput" placeholder="Enter group name" class="modal-input">
+                <label class="modal-checkbox">
+                    <input type="checkbox" id="groupOpenCheckbox">
+                    <span class="checkmark"></span>
+                    Open group (anyone can join)
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="submitCreateGroup()">Create</button>
+                <button class="btn btn-secondary" onclick="closeCreateGroupModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editMessageModal" class="modal">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Message</h3>
+                <button class="modal-close" onclick="closeEditMessageModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-modal-body">
+                <input type="text" id="editMessageInput" placeholder="Edit your message" class="modal-input">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="submitEditMessage()">Save</button>
+                <button class="btn btn-secondary" onclick="closeEditMessageModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="joinRequestModal" class="modal">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <h3><i class="fas fa-user-plus"></i> Join Request</h3>
+                <button class="modal-close" onclick="closeJoinRequestModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-modal-body">
+                <p id="joinRequestText"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="acceptJoinRequest()">Accept</button>
+                <button class="btn btn-secondary" onclick="declineJoinRequest()">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>

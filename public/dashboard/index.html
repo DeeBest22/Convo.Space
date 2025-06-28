@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoCall Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link span {
+            font-weight: 500;
+        }
+
+        .nav-link .badge {
+            background: #ff4757;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(102, 126, 234, 0.1);
+            width: 300px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info h4 {
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-info p {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card, .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover, .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .activity-list, .meetings-list, .contacts-list {
+            list-style: none;
+        }
+
+        .activity-item, .meeting-item, .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-icon, .meeting-icon, .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+        }
+
+        .contact-avatar {
+            border-radius: 50%;
+            font-weight: 600;
+        }
+
+        .activity-content, .meeting-content, .contact-content {
+            flex: 1;
+        }
+
+        .activity-title, .meeting-title, .contact-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-time, .meeting-time, .contact-status {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .notification {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            color: white;
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification i {
+            font-size: 1.5rem;
+        }
+
+        .video-room {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn.mic {
+            background: #4CAF50;
+        }
+
+        .control-btn.camera {
+            background: #2196F3;
+        }
+
+        .control-btn.screen {
+            background: #FF9800;
+        }
+
+        .control-btn.end {
+            background: #f44336;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .recording-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .recording-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .recording-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .recording-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.2rem;
+        }
+
+        .recording-meta {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .play-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-video"></i> VideoCall</h1>
+                <p>Connect & Collaborate</p>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <div class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="video-calls">
+                        <i class="fas fa-video"></i>
+                        <span>Video Calls</span>
+                        <span class="badge">3</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="meetings">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Meetings</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="contacts">
+                        <i class="fas fa-address-book"></i>
+                        <span>Contacts</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="groups">
+                        <i class="fas fa-users"></i>
+                        <span>Groups</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="recordings">
+                        <i class="fas fa-film"></i>
+                        <span>Recordings</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="chat">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat</span>
+                        <span class="badge">12</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="screen-share">
+                        <i class="fas fa-desktop"></i>
+                        <span>Screen Share</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="whiteboard">
+                        <i class="fas fa-chalkboard"></i>
+                        <span>Whiteboard</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="file-sharing">
+                        <i class="fas fa-folder-open"></i>
+                        <span>File Sharing</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h2 id="pageTitle">Welcome back!</h2>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search meetings, contacts, files...">
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-info">
+                            <h4>John Doe</h4>
+                            <p>john@example.com</p>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div id="dashboard" class="content-section active">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="stat-number">142</div>
+                        <div class="stat-label">Total Meetings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number">28h</div>
+                        <div class="stat-label">Meeting Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number">89</div>
+                        <div class="stat-label">Contacts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Recordings</div>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="feature-title">Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn pulse">
+                                <i class="fas fa-video"></i>
+                                Start Meeting
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-plus"></i>
+                                Schedule Call
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-share-alt"></i>
+                                Join Meeting
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-desktop"></i>
+                                Screen Share
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="feature-title">Recent Activity</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Meeting with Design Team</div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Shared presentation.pdf</div>
+                                    <div class="activity-time">4 hours ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Scheduled client call</div>
+                                    <div class="activity-time">Yesterday</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3 class="feature-title">Upcoming Meetings</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Team Standup</div>
+                                    <div class="activity-time">Today at 10:00 AM</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Client Presentation</div>
+                                    <div class="activity-time">Today at 2:30 PM</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <h3 class="feature-title">Notifications</h3>
+                        </div>
+                        <div class="notification">
+                            <i class="fas fa-video"></i>
+                            <div>
+                                <strong>Meeting reminder:</strong> Team standup starts in 15 minutes
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <i class="fas fa-user-plus"></i>
+                            <div>
+                                <strong>New contact:</strong> Sarah Johnson added you to contacts
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="video-calls" class="content-section">
+                <div class="video-room">
+                    <i class="fas fa-video" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.7;"></i>
+                    <h3>Start a Video Call</h3>
+                    <p>Connect with your team instantly</p>
+                    <div class="video-controls">
+                        <button class="control-btn mic"><i class="fas fa-microphone"></i></button>
+                        <button class="control-btn camera"><i class="fas fa-video"></i></button>
+                        <button class="control-btn screen"><i class="fas fa-desktop"></i></button>
+                        <button class="control-btn end"><i class="fas fa-phone-slash"></i></button>
+                    </div>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h3 class="feature-title">Active Calls</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Marketing Team Call</div>
+                                    <div class="activity-time">Started 15 minutes ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">1-on-1 with Sarah</div>
+                                    <div class="activity-time">Started 5 minutes ago</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="meetings" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h3 class="feature-title">Schedule New Meeting</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Meeting Title</label>
+                            <input type="text" placeholder="Enter meeting title">
+                        </div>
+                        <div class="form-group">
+                            <label>Date & Time</label>
+                            <input type="datetime-local">
+                        </div>
+                        <div class="form-group">
+                            <label>Participants</label>
+                            <input type="text" placeholder="Enter email addresses">
+                        </div>
+                        <button class="btn-primary">Schedule Meeting</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <h3 class="feature-title">Scheduled Meetings</h3>
+                        </div>
+                        <ul class="meetings-list">
+                            <li class="meeting-item">
+                                <div class="meeting-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <div class="meeting-content">
+                                    <div class="meeting-title">Client Presentation</div>
+                                    <div class="meeting-time">Today at 2:30 PM</div>
+                                </div>
+                            </li>
+                            <li class="meeting-item">
+                                <div class="meeting-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="meeting-content">
+                                    <div class="meeting-title">Brainstorming Session</div>
+                                    <div class="meeting-time">Tomorrow at 11:00 AM</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contacts" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3 class="feature-title">Add New Contact</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Enter full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="Enter email address">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" placeholder="Enter phone number">
+                        </div>
+                        <button class="btn-primary">Add Contact</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-address-book"></i>
+                            </div>
+                            <h3 class="feature-title">My Contacts</h3>
+                        </div>
+                        <ul class="contacts-list">
+                            <li class="contact-item">
+                                <div class="contact-avatar">SJ</div>
+                                <div class="contact-content">
+                                    <div class="contact-name">Sarah Johnson</div>
+                                    <div class="contact-status">Online</div>
+                                </div>
+                            </li>
+                            <li class="contact-item">
+                                <div class="contact-avatar">MD</div>
+                                <div class="contact-content">
+                                    <div class="contact-name">Mike Davis</div>
+                                    <div class="contact-status">Away</div>
+                                </div>
+                            </li>
+                            <li class="contact-item">
+                                <div class="contact-avatar">ER</div>
+                                <div class="contact-content">
+                                    <div class="contact-name">Emma Rodriguez</div>
+                                    <div class="contact-status">Offline</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="groups" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="feature-title">My Groups</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Design Team</div>
+                                    <div class="activity-time">5 members</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Project Alpha</div>
+                                    <div class="activity-time">12 members</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Marketing Team</div>
+                                    <div class="activity-time">8 members</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h3 class="feature-title">Create New Group</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Group Name</label>
+                            <input type="text" placeholder="Enter group name">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea placeholder="Enter group description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Add Members</label>
+                            <input type="text" placeholder="Enter email addresses">
+                        </div>
+                        <button class="btn-primary">Create Group</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="recordings" class="content-section">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h3 class="feature-title">Meeting Recordings</h3>
+                    </div>
+                    <div class="recording-item">
+                        <button class="play-btn"><i class="fas fa-play"></i></button>
+                        <div class="recording-info">
+                            <div class="recording-title">Team Standup - June 27, 2025</div>
+                            <div class="recording-meta">Duration: 45 minutes | Size: 120 MB</div>
+                        </div>
+                    </div>
+                    <div class="recording-item">
+                        <button class="play-btn"><i class="fas fa-play"></i></button>
+                        <div class="recording-info">
+                            <div class="recording-title">Client Presentation - June 26, 2025</div>
+                            <div class="recording-meta">Duration: 1 hour 15 minutes | Size: 180 MB</div>
+                        </div>
+                    </div>
+                    <div class="recording-item">
+                        <button class="play-btn"><i class="fas fa-play"></i></button>
+                        <div class="recording-info">
+                            <div class="recording-title">Design Review - June 25, 2025</div>
+                            <div class="recording-meta">Duration: 32 minutes | Size: 95 MB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3 class="feature-title">Recent Chats</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Sarah Johnson</div>
+                                    <div class="activity-time">Can we reschedule the meeting?</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Design Team</div>
+                                    <div class="activity-time">New mockups uploaded</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Mike Davis</div>
+                                    <div class="activity-time">Thanks for the presentation!</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="screen-share" class="content-section">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3 class="feature-title">Screen Sharing</h3>
+                    </div>
+                    <div style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-desktop" style="font-size: 4rem; color: #667eea; margin-bottom: 1rem;"></i>
+                        <h3>Share Your Screen</h3>
+                        <p style="margin-bottom: 2rem;">Present your work to others in real-time</p>
+                        <button class="btn-primary">Start Screen Share</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="whiteboard" class="content-section">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-chalkboard"></i>
+                        </div>
+                        <h3 class="feature-title">Collaborative Whiteboard</h3>
+                    </div>
+                    <div style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-chalkboard" style="font-size: 4rem; color: #667eea; margin-bottom: 1rem;"></i>
+                        <h3>Digital Whiteboard</h3>
+                        <p style="margin-bottom: 2rem;">Collaborate and brainstorm with your team</p>
+                        <button class="btn-primary">Open Whiteboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="file-sharing" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <h3 class="feature-title">Upload Files</h3>
+                        </div>
+                        <div style="text-align: center; padding: 2rem; border: 2px dashed #ddd; border-radius: 10px;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+                            <p>Drag and drop files here or</p>
+                            <button class="btn-primary" style="margin-top: 1rem;">Choose Files</button>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <h3 class="feature-title">Recent Files</h3>
+                        </div>
+                        <ul class="activity-list">
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">presentation.pdf</div>
+                                    <div class="activity-time">Shared 2 hours ago</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-file-image"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">mockup.png</div>
+                                    <div class="activity-time">Shared yesterday</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analytics" class="content-section">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Meetings This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number">8.5h</div>
+                        <div class="stat-label">Average Meeting Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number">65</div>
+                        <div class="stat-label">Active Participants</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Attendance Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings" class="content-section">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="feature-title">Profile Settings</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" value="+1 234 567 8900">
+                        </div>
+                        <button class="btn-primary">Update Profile</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <h3 class="feature-title">App Settings</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Default Meeting Duration</label>
+                            <select>
+                                <option>30 minutes</option>
+                                <option>45 minutes</option>
+                                <option selected>60 minutes</option>
+                                <option>90 minutes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Auto-join Audio</label>
+                            <select>
+                                <option>Yes</option>
+                                <option selected>No</option>
+                            </select>
+                        </div>
+                        <button class="btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        const pageTitle = document.getElementById('pageTitle');
+
+        const sectionTitles = {
+            'dashboard': 'Welcome back!',
+            'video-calls': 'Video Calls',
+            'meetings': 'Meetings',
+            'contacts': 'Contacts',
+            'groups': 'Groups',
+            'recordings': 'Recordings',
+            'chat': 'Chat',
+            'screen-share': 'Screen Share',
+            'whiteboard': 'Whiteboard',
+            'file-sharing': 'File Sharing',
+            'analytics': 'Analytics',
+            'settings': 'Settings'
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const targetSection = this.getAttribute('data-section');
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                contentSections.forEach(s => s.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+                
+                pageTitle.textContent = sectionTitles[targetSection] || 'VideoCall Dashboard';
+            });
+        });
+
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                switch(action) {
+                    case 'Start Meeting':
+                        alert('Starting instant meeting...');
+                        break;
+                    case 'Schedule Call':
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        contentSections.forEach(s => s.classList.remove('active'));
+                        document.querySelector('[data-section="meetings"]').classList.add('active');
+                        document.getElementById('meetings').classList.add('active');
+                        pageTitle.textContent = 'Meetings';
+                        break;
+                    case 'Join Meeting':
+                        const meetingId = prompt('Enter meeting ID:');
+                        if (meetingId) alert(`Joining meeting: ${meetingId}`);
+                        break;
+                    case 'Screen Share':
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        contentSections.forEach(s => s.classList.remove('active'));
+                        document.querySelector('[data-section="screen-share"]').classList.add('active');
+                        document.getElementById('screen-share').classList.add('active');
+                        pageTitle.textContent = 'Screen Share';
+                        break;
+                }
+            });
+        });
+
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.opacity = this.style.opacity === '0.5' ? '1' : '0.5';
+            });
+        });
+
+        document.querySelectorAll('.play-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Playing recording...');
+            });
+        });
+
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const text = this.textContent;
+                if (text.includes('Schedule') || text.includes('Add') || text.includes('Create') || text.includes('Update') || text.includes('Save')) {
+                    e.preventDefault();
+                    alert(`${text} action triggered!`);
+                }
+            });
+        });
+
+        document.querySelector('.search-box input').addEventListener('input', function(e) {
+            const query = e.target.value;
+            if (query.length > 2) {
+                console.log('Searching for:', query);
+            }
+        });
+    </script>
+</body>
+</html>
+<style>
+    /* Styling for the categories sidebar to make it scrollable */
+.categories-container {
+    max-height: 80vh; /* Set a fixed height relative to viewport */
+    overflow-y: auto; /* Enable vertical scrolling */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Scrollbar color */
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.categories-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.categories-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.categories-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.categories-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Smooth scrolling behavior */
+.categories-container {
+    scroll-behavior: smooth;
+}
+
+/* Optional: Add padding to the container for better appearance */
+.categories-container > div {
+    padding: 10px;
+}
+
+/* Ensure the sidebar items don't shrink */
+.categories-container a {
+    display: block;
+    white-space: nowrap;
+}
+</style>

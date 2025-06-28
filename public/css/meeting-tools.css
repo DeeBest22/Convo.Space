@@ -1,0 +1,151 @@
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .zephyr-quantum-container-9x7k {
+            position: fixed;
+            bottom: 20px;
+    right: 100px;
+            z-index: 1000;
+        }
+
+        .nexus-ethereal-trigger-8m4w {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nexus-ethereal-trigger-8m4w:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 16px 48px rgba(102, 126, 234, 0.4);
+        }
+
+        .nexus-ethereal-trigger-8m4w:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .nexus-ethereal-trigger-8m4w::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nexus-ethereal-trigger-8m4w:hover::before {
+            opacity: 1;
+        }
+
+        .cosmos-icon-wrapper-3k9s {
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+
+        .aurora-tools-panel-7h2x {
+             
+            position: absolute;
+            bottom: 88px;
+            right: 144px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-width: 280px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .aurora-tools-panel-7h2x.stellar-active-state-6v8n {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+       
+
+        .prism-tool-grid-4j8m {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .quantum-tool-item-2x9v {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            border-radius: 12px;
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            color: #334155;
+        }
+
+        .quantum-tool-item-2x9v:hover {
+            background: rgba(241, 245, 249, 0.9);
+            border-color: rgba(148, 163, 184, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .nebula-icon-container-5w7k {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #64748b;
+            flex-shrink: 0;
+        }
+
+        .quantum-tool-item-2x9v:hover .nebula-icon-container-5w7k {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .celestial-tool-text-8k3m {
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .eclipse-header-9m2x {
+            text-align: center;
+            margin-bottom: 1.25rem;
+            color: #475569;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }

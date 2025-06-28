@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="js/settings.js"></script>
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+<body>
+   <div class="control-bar">
+    
+      <button style="position: absolute; bottom: 467px;" id="settings-btn" class="control-btn"><i class="fas fa-cog"></i></button>
+      
+    </div>
+  </div>
+  <!-- Settings modalForSettings -->
+  <div id="settings-modalForSettings" class="modalForSettings">
+    <div class="modalForSettings-content">
+      <div class="modalForSettings-header">
+        <h2>Settings</h2>
+        <button id="close-settings" class="close-btn-settings"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modalForSettings-body">
+        <!-- Settings Navigation -->
+        <div class="settings-nav">
+          <div class="nav-item active" data-tab="general">
+            <i class="fas fa-sliders-h"></i>
+            <span>General</span>
+          </div>
+          <div class="nav-item" data-tab="audio">
+            <i class="fas fa-microphone"></i>
+            <span>Audio</span>
+          </div>
+          <div class="nav-item" data-tab="video">
+            <i class="fas fa-video"></i>
+            <span>Video</span>
+          </div>
+          <div class="nav-item" data-tab="screen">
+            <i class="fas fa-desktop"></i>
+            <span>Screen Sharing</span>
+          </div>
+          <div class="nav-item" data-tab="participants">
+            <i class="fas fa-users"></i>
+            <span>Participants</span>
+          </div>
+          <div class="nav-item" data-tab="meeting">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Meeting</span>
+          </div>
+          <div class="nav-item" data-tab="chat">
+            <i class="fas fa-comment-alt"></i>
+            <span>Chat & Messaging</span>
+          </div>
+          <div class="nav-item" data-tab="privacy">
+            <i class="fas fa-shield-alt"></i>
+            <span>Privacy & Security</span>
+          </div>
+          <div class="nav-item" data-tab="layout">
+            <i class="fas fa-th-large"></i>
+            <span>Layout & Display</span>
+          </div>
+          <div class="nav-item" data-tab="notifications">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+          </div>
+          <div class="nav-item" data-tab="advanced">
+            <i class="fas fa-code"></i>
+            <span>Advanced</span>
+          </div>
+        </div>
+        
+        <!-- Settings Content -->
+        <div class="settings-content">
+          <!-- General Settings -->
+          <div id="general" class="settings-tab active">
+            <h3>General Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Language</span>
+                <select class="dropdown">
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                  <option>German</option>
+                  <option>Chinese</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Theme</span>
+                <select class="dropdown">
+                  <option>Light</option>
+                  <option>Dark</option>
+                  <option>System</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Auto-start meetings</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Always show meeting controls</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Audio Settings -->
+          <div id="audio" class="settings-tab">
+            <h3>Audio Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Select Microphone</span>
+                <select class="dropdown">
+                  <option>Default Microphone</option>
+                  <option>External Microphone</option>
+                  <option>Headset Microphone</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Mute/Unmute Microphone</span>
+                <label class="toggle">
+                  <input type="checkbox" id="mute-toggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item slider-item">
+                <span>Input Volume</span>
+                <div class="volume-control">
+                  <i class="fas fa-volume-down"></i>
+                  <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
+                  <i class="fas fa-volume-up"></i>
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Noise Suppression</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="audio-test">
+                <button class="test-btn">Test Microphone</button>
+                <div class="audio-meter">
+                  <div class="meter-bar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Video Settings -->
+          <div id="video" class="settings-tab">
+            <h3>Video Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Select Camera</span>
+                <select class="dropdown">
+                  <option>Default Camera</option>
+                  <option>External Webcam</option>
+                  <option>Front Camera</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Enable Video</span>
+                <label class="toggle">
+                  <input type="checkbox" checked id="video-toggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Resolution</span>
+                <select class="dropdown">
+                  <option>720p (HD)</option>
+                  <option>1080p (Full HD)</option>
+                  <option>480p (SD)</option>
+                  <option>360p (Low)</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Virtual Background</span>
+                <div class="bg-options">
+                  <div class="bg-option active">
+                    <div class="bg-thumbnail none"></div>
+                    <span>None</span>
+                  </div>
+                  <div class="bg-option">
+                    <div class="bg-thumbnail blur"></div>
+                    <span>Blur</span>
+                  </div>
+                  <div class="bg-option">
+                    <div class="bg-thumbnail beach"></div>
+                    <span>Beach</span>
+                  </div>
+                  <div class="bg-option">
+                    <div class="bg-thumbnail office"></div>
+                    <span>Office</span>
+                  </div>
+                  <div class="bg-option">
+                    <div class="bg-thumbnail custom">
+                      <i class="fas fa-plus"></i>
+                    </div>
+                    <span>Custom</span>
+                  </div>
+                </div>
+              </div>
+              <div class="video-preview">
+                <div class="video-monitor">
+                  <i class="fas fa-user"></i>
+                </div>
+                <button class="test-btn">Test Video</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Screen Sharing Settings -->
+          <div id="screen" class="settings-tab">
+            <h3>Screen Sharing Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Share Options</span>
+                <div class="option-buttons">
+                  <button class="option-btn active">Entire Screen</button>
+                  <button class="option-btn">Window</button>
+                  <button class="option-btn">Tab</button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Allow others to share screen</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Request permission before allowing shares</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Share computer sound</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Optimize for video clips</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Participant Settings -->
+          <div id="participants" class="settings-tab">
+            <h3>Participant Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Display Name</span>
+                <input type="text" value="Your Name" class="text-input">
+              </div>
+              <div class="setting-item">
+                <span>Allow participants to rename themselves</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Allow participants to unmute themselves</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Allow hand raising</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Host controls</span>
+                <div class="controls-list">
+                  <div class="control-item">
+                    <input type="checkbox" checked id="control-mute">
+                    <label for="control-mute">Mute all participants</label>
+                  </div>
+                  <div class="control-item">
+                    <input type="checkbox" checked id="control-kick">
+                    <label for="control-kick">Remove participants</label>
+                  </div>
+                  <div class="control-item">
+                    <input type="checkbox" checked id="control-spotlight">
+                    <label for="control-spotlight">Spotlight video</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Meeting Settings -->
+          <div id="meeting" class="settings-tab">
+            <h3>Meeting Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Meeting ID</span>
+                <div class="id-display">
+                  <input type="text" value="832 4902 5710" readonly class="text-input">
+                  <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Meeting Passcode</span>
+                <div class="passcode-display">
+                  <input type="text" value="123456" class="text-input">
+                  <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                </div>
+              </div>
+              <div class="control-panel">
+    
+    
+                <div class="toggle-container">
+                  <span class="toggle-label">
+                    <i class="fas fa-shield-alt"></i>
+                    Block Access to Page
+                    <div class="tooltip">
+                      <i class="fas fa-question-circle"></i>
+                      <span class="tooltiptext">When enabled, new visitors cannot access the content page, but existing viewers will maintain access through their active sessions.</span>
+                    </div>
+                  </span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="blockToggle">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                
+                <div id="sessionCounter" class="session-counter">
+                  <i class="fas fa-users"></i>
+                  <div class="session-counter-content">
+                    <div class="session-counter-title">Active Sessions</div>
+                    <div class="session-counter-value">
+                      <span id="activeSessionCount">0</span> viewers currently accessing content
+                      <span id="exemptSessionsText" class="exempt-sessions" style="display: none">
+                        (Exempt from blocking)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Adding missing buttons that were referenced in JS -->
+                <div class="buttons">
+                  <button id="createSessionBtn" class="btn btn-primary">Create Exempt Session</button>
+                  <a style="display: none;" id="viewContentBtn" href="joinMeet.html" class="btn btn-secondary">View Content Page</a>
+                </div>
+                
+                <div id="statusMessage" class="status"></div>
+                
+                <div id="infoBox" class="info-box">
+                  <i class="fas fa-info-circle"></i>
+                  <strong>Note:</strong> Create an exempt session to access content even when access is blocked.
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Enable waiting room</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              
+              
+              <div class="setting-item">
+                <span>Allow join before host</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              
+              <div class="setting-item">
+                <span>Record meeting</span>
+                <select class="dropdown">
+                  <option>Don't Record</option>
+                  <option>Record to Cloud</option>
+                  <option>Record to Computer</option>
+                </select>
+              </div>
+              <div class="meeting-controls">
+                <button class="meeting-btn end">End Meeting</button>
+                <button class="meeting-btn leave">Leave Meeting</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chat & Messaging Settings -->
+          <div id="chat" class="settings-tab">
+            <h3>Chat & Messaging</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Enable Chat</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Allow Private Messages</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Auto-save Chat History</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>File Sharing</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Maximum File Size</span>
+                <select class="dropdown">
+                  <option>5 MB</option>
+                  <option>10 MB</option>
+                  <option>25 MB</option>
+                  <option>50 MB</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Allow Emoji Reactions</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Privacy & Security Settings -->
+          <div id="privacy" class="settings-tab">
+            <h3>Privacy & Security</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>End-to-End Encryption</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Password Protection</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Access Permissions</span>
+                <select class="dropdown">
+                  <option>Anyone with the Link</option>
+                  <option>Only Invited Users</option>
+                  <option>Domain Restricted</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Lock Meeting After Start</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Allow Anonymous Participants</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <div class="data-policy">
+                  <button class="policy-btn">View Privacy Policy</button>
+                  <button class="policy-btn">Data Usage Settings</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Layout & Display Settings -->
+          <div id="layout" class="settings-tab">
+            <h3>Layout & Display</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>View Mode</span>
+                <div class="option-buttons">
+                  <button class="option-btn active">Grid</button>
+                  <button class="option-btn">Speaker</button>
+                  <button class="option-btn">Minimized</button>
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Maximum Visible Participants</span>
+                <select class="dropdown">
+                  <option>9</option>
+                  <option>16</option>
+                  <option>25</option>
+                  <option>49</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Auto-hide Self View</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Mirror Self View</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Display Names Always Visible</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Side Panel View</span>
+                <select class="dropdown">
+                  <option>Chat & Participants</option>
+                  <option>Chat Only</option>
+                  <option>Participants Only</option>
+                  <option>Hide Side Panel</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Notifications Settings -->
+          <div id="notifications" class="settings-tab">
+            <h3>Notifications</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Sound Alerts</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Notification Volume</span>
+                <div class="volume-control">
+                  <i class="fas fa-volume-down"></i>
+                  <input type="range" min="0" max="100" value="50" class="slider">
+                  <i class="fas fa-volume-up"></i>
+                </div>
+              </div>
+              <div class="setting-item">
+                <span>Desktop Notifications</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="notification-items">
+                <div class="notification-item">
+                  <span>Participant Join/Leave</span>
+                  <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <span>Chat Messages</span>
+                  <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <span>Hand Raised</span>
+                  <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <span>Screen Share Started</span>
+                  <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <span>Recording Started</span>
+                  <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Advanced Settings -->
+          <div id="advanced" class="settings-tab">
+            <h3>Advanced Settings</h3>
+            <div class="setting-group-settings">
+              <div class="setting-item">
+                <span>Bandwidth Usage</span>
+                <select class="dropdown">
+                  <option>Auto (Recommended)</option>
+                  <option>High Quality</option>
+                  <option>Medium Quality</option>
+                  <option>Low Data Usage</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span>Hardware Acceleration</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Enable Echo Cancellation</span>
+                <label class="toggle">
+                  <input type="checkbox" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span>Show Statistics</span>
+                <label class="toggle">
+                  <input type="checkbox">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              
+              <div class="system-info">
+                <button class="info-btn"><i class="fas fa-info-circle"></i> System Information</button>
+                <button class="info-btn"><i class="fas fa-bug"></i> Debug Mode</button>
+                <button class="info-btn"><i class="fas fa-file-alt"></i> View Logs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modalForSettings-footer">
+        <button id="reset-settings" class="secondary-btn">Reset All</button>
+        <button id="save-settings" class="primary-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
